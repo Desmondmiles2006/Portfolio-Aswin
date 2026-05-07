@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Arduino PCB Inspired Palette */
+    --background: 220 20% 6%;
+    --foreground: 180 10% 92%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 180 10% 92%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 180 10% 92%;
+
+    /* Arduino Teal - Primary */
+    --primary: 180 100% 31%;
+    --primary-foreground: 220 20% 6%;
+
+    /* Muted Teal for secondary */
+    --secondary: 180 40% 15%;
+    --secondary-foreground: 180 30% 85%;
+
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 55%;
+
+    /* Cyan accent */
+    --accent: 185 80% 45%;
+    --accent-foreground: 220 20% 6%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 180 20% 18%;
+    --input: 180 20% 18%;
+    --ring: 180 100% 31%;
+
+    --radius: 0.5rem;
+
+    /* Custom tokens */
+    --copper: 30 70% 50%;
+    --copper-glow: 30 80% 60%;
+    --gold: 45 85% 55%;
+    --circuit-line: 180 100% 31%;
+    --circuit-glow: 180 100% 50%;
+    --surface-elevated: 220 18% 12%;
+    --surface-overlay: 220 20% 8%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(180 100% 31%), hsl(185 80% 40%));
+    --gradient-copper: linear-gradient(135deg, hsl(30 70% 50%), hsl(45 85% 55%));
+    --gradient-dark: linear-gradient(180deg, hsl(220 20% 8%), hsl(220 20% 4%));
+    --gradient-glow: radial-gradient(circle, hsl(180 100% 31% / 0.3), transparent 70%);
+
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(180 100% 31% / 0.3);
+    --shadow-copper: 0 0 20px hsl(30 70% 50% / 0.3);
+    --shadow-card: 0 4px 24px hsl(220 20% 2% / 0.5);
+
+    /* Sidebar */
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 180 10% 92%;
+    --sidebar-primary: 180 100% 31%;
+    --sidebar-primary-foreground: 220 20% 6%;
+    --sidebar-accent: 180 40% 15%;
+    --sidebar-accent-foreground: 180 30% 85%;
+    --sidebar-border: 180 20% 18%;
+    --sidebar-ring: 180 100% 31%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'JetBrains Mono', monospace;
+    @apply font-bold tracking-tight;
+  }
+
+  code, pre, .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .text-gradient-copper {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-copper);
+  }
+
+  .border-glow {
+    @apply border border-primary/30;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .border-copper {
+    @apply border;
+    border-color: hsl(var(--copper));
+    box-shadow: var(--shadow-copper);
+  }
+
+  .surface-elevated {
+    background-color: hsl(var(--surface-elevated));
+  }
+
+  .circuit-line {
+    background: linear-gradient(90deg, transparent, hsl(var(--circuit-line)), transparent);
+  }
+
+  .glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  .scan-line {
+    animation: scan-line 3s linear infinite;
+  }
+
+  .data-pulse {
+    animation: data-pulse 1.5s ease-in-out infinite;
+  }
+
+  /* PCB Grid Pattern */
+  .pcb-grid {
+    background-image: 
+      linear-gradient(hsl(180 100% 31% / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(180 100% 31% / 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Circuit trace styling */
+  .circuit-trace {
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      hsl(var(--copper) / 0.6) 20%, 
+      hsl(var(--gold) / 0.8) 50%, 
+      hsl(var(--copper) / 0.6) 80%, 
+      transparent 100%
+    );
+  }
+
+  /* Noise overlay */
+  .noise-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+  .animation-delay-800 {
+    animation-delay: 800ms;
+  }
+  .animation-delay-1000 {
+    animation-delay: 1000ms;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.4;
+    box-shadow: 0 0 20px hsl(180 100% 31% / 0.3);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 40px hsl(180 100% 31% / 0.6);
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes data-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes circuit-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
