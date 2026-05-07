@@ -1,66 +1,71 @@
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Cpu, Globe, Brain, Wallet } from "lucide-react";
+import { Cpu, Globe, Brain, FlaskConical } from "lucide-react";
 
 const domains = [
   {
     icon: Cpu,
     title: "Embedded & IoT",
-    description: "Designing firmware and hardware interfaces for real-time sensor networks, edge computing, and industrial automation systems.",
+    description: "Designing firmware and hardware interfaces for real-time sensor networks, edge computing, and IoT-based healthcare systems using ESP32 and sensor fusion.",
     color: "text-primary",
-    borderColor: "border-primary/30",
+    borderColor: "border-primary/25",
+    hover: "hover:border-primary/50",
   },
   {
     icon: Globe,
-    title: "Web & Automation",
-    description: "Building scalable full-stack platforms with automated pipelines, real-time data processing, and intelligent workflow orchestration.",
+    title: "Full-Stack Web",
+    description: "Building scalable platforms with React.js, Node.js, Express.js, MongoDB and Firebase — from responsive UIs to robust REST APIs.",
     color: "text-accent",
-    borderColor: "border-accent/30",
+    borderColor: "border-accent/25",
+    hover: "hover:border-accent/50",
   },
   {
     icon: Brain,
-    title: "AI Analytics",
-    description: "Implementing machine learning models for predictive analytics, anomaly detection, and decision-support intelligence systems.",
+    title: "AI/ML & Computer Vision",
+    description: "Implementing ML models (LSTM, classification, CV) for real-world applications in healthcare, stress detection, and microscopic diagnostics.",
     color: "text-copper",
-    borderColor: "border-copper/30",
+    borderColor: "border-copper/25",
+    hover: "hover:border-copper/50",
   },
   {
-    icon: Wallet,
-    title: "FinTech Systems",
-    description: "Engineering secure, reliable financial automation tools with compliance-aware architecture and operational efficiency focus.",
+    icon: FlaskConical,
+    title: "Research & Innovation",
+    description: "Published internship research at French Institute of Pondicherry, 1st place at national Ideathon, and multiple ongoing SRM research projects.",
     color: "text-gold",
-    borderColor: "border-gold/30",
+    borderColor: "border-gold/25",
+    hover: "hover:border-gold/50",
   },
+];
+
+const stats = [
+  { value: "9.39", label: "CGPA / 10" },
+  { value: "5+", label: "Projects" },
+  { value: "4+", label: "Internships" },
+  { value: "1st", label: "National Place" },
 ];
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.13 } },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] as const },
   },
 };
 
 export const AboutSection = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="about" className="py-24 relative">
+    <section id="about" className="py-28 relative">
       <div className="absolute inset-0 pcb-grid opacity-20" />
-      
+
       <div className="container px-6 relative">
         <motion.div
           ref={ref}
@@ -69,58 +74,34 @@ export const AboutSection = () => {
           animate={isInView ? "visible" : "hidden"}
           className="max-w-6xl mx-auto"
         >
-          {/* Section header */}
-          <motion.div variants={itemVariants} className="text-center mb-16">
-            <span className="text-sm font-mono text-primary mb-4 block">// ABOUT</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+          <motion.div variants={itemVariants} className="text-center mb-20">
+            <span className="text-sm font-mono text-primary mb-3 block tracking-widest">// ABOUT</span>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-5">
               Cross-Domain <span className="text-gradient-primary">Engineering</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A systems engineer with deep expertise spanning hardware interfaces to cloud infrastructure,
-              focused on building reliable, scalable solutions with measurable real-world impact.
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Innovative and tech-savvy developer with expertise in full-stack development, IoT, AI, and database management. Passionate about building efficient, user-friendly applications with real-world impact.
             </p>
           </motion.div>
 
-          {/* Domain cards */}
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {domains.map((domain, index) => (
+          <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-14">
+            {domains.map((domain) => (
               <motion.div
                 key={domain.title}
                 variants={itemVariants}
-                className={`group relative p-6 rounded-lg border ${domain.borderColor} bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300`}
+                className={`group relative p-6 rounded-2xl border ${domain.borderColor} ${domain.hover} bg-card/50 backdrop-blur-sm transition-all duration-350`}
                 whileHover={{ scale: 1.02, y: -5 }}
+                transition={{ type: "spring", stiffness: 280, damping: 22 }}
               >
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                <div className="relative">
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg border border-border bg-surface-elevated`}>
-                      <domain.icon className={`w-6 h-6 ${domain.color}`} />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2 font-mono">{domain.title}</h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {domain.description}
-                      </p>
-                    </div>
-                  </div>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
 
-                  {/* Circuit trace decoration */}
-                  <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10">
-                    <svg viewBox="0 0 100 100" className={domain.color}>
-                      <path
-                        d="M0,50 L30,50 L40,30 L60,30 L70,50 L100,50"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <circle cx="30" cy="50" r="3" fill="currentColor" />
-                      <circle cx="70" cy="50" r="3" fill="currentColor" />
-                    </svg>
+                <div className="relative flex items-start gap-4">
+                  <div className="p-3 rounded-xl border border-border bg-background/60 flex-shrink-0">
+                    <domain.icon className={`w-5 h-5 ${domain.color}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold mb-2 font-mono">{domain.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{domain.description}</p>
                   </div>
                 </div>
               </motion.div>
@@ -130,23 +111,18 @@ export const AboutSection = () => {
           {/* Stats */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-5"
           >
-            {[
-              { value: "5+", label: "Years Experience" },
-              { value: "20+", label: "Projects Delivered" },
-              { value: "10+", label: "Tech Stack" },
-              { value: "100%", label: "System Uptime" },
-            ].map((stat) => (
-              <div
+            {stats.map((stat) => (
+              <motion.div
                 key={stat.label}
-                className="text-center p-6 rounded-lg border border-border bg-card/30"
+                className="text-center p-6 rounded-2xl border border-border bg-card/30 backdrop-blur-sm hover:border-primary/30 hover:bg-card/50 transition-all duration-300"
+                whileHover={{ y: -4, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 22 }}
               >
-                <div className="text-3xl font-bold text-gradient-primary mb-2 font-mono">
-                  {stat.value}
-                </div>
+                <div className="text-3xl font-bold text-gradient-primary mb-1.5 font-mono">{stat.value}</div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </motion.div>

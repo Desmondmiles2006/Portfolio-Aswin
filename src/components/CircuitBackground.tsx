@@ -1,122 +1,111 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
-interface Node {
-  id: number;
-  x: number;
-  y: number;
-  delay: number;
-}
-
-interface Trace {
-  id: number;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  delay: number;
-}
+interface Node { id: number; x: number; y: number; delay: number; size: number; }
+interface Trace { id: number; x1: number; y1: number; x2: number; y2: number; delay: number; duration: number; }
 
 export const CircuitBackground = () => {
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [traces, setTraces] = useState<Trace[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    // Generate random nodes
-    const generatedNodes: Node[] = [];
-    for (let i = 0; i < 30; i++) {
-      generatedNodes.push({
+  useEffect(() => { setMounted(true); }, []);
+
+  const { nodes, traces } = useMemo(() => {
+    const rng = (seed: number) => {
+      const x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
+    };
+    const generatedNodes: Node[] = Array.from({ length: 25 }, (_, i) => ({
+      id: i,
+      x: rng(i * 7.3) * 100,
+      y: rng(i * 3.7) * 100,
+      delay: rng(i * 1.9) * 3,
+      size: rng(i * 5.1) > 0.7 ? 3 : 2,
+    }));
+
+    const generatedTraces: Trace[] = Array.from({ length: 18 }, (_, i) => {
+      const start = generatedNodes[Math.floor(rng(i * 2.3) * generatedNodes.length)];
+      const end = generatedNodes[Math.floor(rng(i * 4.7) * generatedNodes.length)];
+      return {
         id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        delay: Math.random() * 2,
-      });
-    }
-    setNodes(generatedNodes);
+        x1: start.x, y1: start.y,
+        x2: end.x, y2: end.y,
+        delay: rng(i * 1.2) * 4,
+        duration: 2.5 + rng(i * 3.1) * 3,
+      };
+    });
 
-    // Generate traces connecting some nodes
-    const generatedTraces: Trace[] = [];
-    for (let i = 0; i < 20; i++) {
-      const startNode = generatedNodes[Math.floor(Math.random() * generatedNodes.length)];
-      const endNode = generatedNodes[Math.floor(Math.random() * generatedNodes.length)];
-      if (startNode && endNode && startNode.id !== endNode.id) {
-        generatedTraces.push({
-          id: i,
-          x1: startNode.x,
-          y1: startNode.y,
-          x2: endNode.x,
-          y2: endNode.y,
-          delay: Math.random() * 3,
-        });
-      }
-    }
-    setTraces(generatedTraces);
+    return { nodes: generatedNodes, traces: generatedTraces };
   }, []);
+
+  if (!mounted) return <div className="absolute inset-0 pcb-grid opacity-40" />;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* PCB Grid */}
+      {/* PCB grid base */}
       <div className="absolute inset-0 pcb-grid opacity-40" />
-      
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
-      
-      {/* SVG Circuit traces */}
-      <svg className="absolute inset-0 w-full h-full">
+
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30" />
+
+      {/* SVG traces */}
+      <svg className="absolute inset-0 w-full h-full" style={{ willChange: "auto" }}>
         <defs>
-          <linearGradient id="traceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="traceGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="hsl(30 70% 50%)" stopOpacity="0" />
-            <stop offset="50%" stopColor="hsl(30 70% 50%)" stopOpacity="0.6" />
+            <stop offset="50%" stopColor="hsl(30 70% 50%)" stopOpacity="0.5" />
             <stop offset="100%" stopColor="hsl(30 70% 50%)" stopOpacity="0" />
           </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+          <linearGradient id="traceGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(200 80% 60%)" stopOpacity="0" />
+            <stop offset="50%" stopColor="hsl(200 80% 60%)" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="hsl(200 80% 60%)" stopOpacity="0" />
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
-        
+
         {traces.map((trace) => (
           <motion.line
             key={trace.id}
-            x1={`${trace.x1}%`}
-            y1={`${trace.y1}%`}
-            x2={`${trace.x2}%`}
-            y2={`${trace.y2}%`}
-            stroke="url(#traceGradient)"
-            strokeWidth="1"
+            x1={`${trace.x1}%`} y1={`${trace.y1}%`}
+            x2={`${trace.x2}%`} y2={`${trace.y2}%`}
+            stroke={trace.id % 2 === 0 ? "url(#traceGrad1)" : "url(#traceGrad2)"}
+            strokeWidth="0.8"
             filter="url(#glow)"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: [0, 0.6, 0.3] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.5, 0.2, 0.5, 0] }}
             transition={{
-              duration: 3,
+              duration: trace.duration,
               delay: trace.delay,
               repeat: Infinity,
-              repeatType: "reverse",
               ease: "easeInOut",
             }}
           />
         ))}
       </svg>
 
-      {/* Animated nodes */}
+      {/* Nodes */}
       {nodes.map((node) => (
         <motion.div
           key={node.id}
-          className="absolute w-2 h-2 rounded-full bg-primary"
+          className="absolute rounded-full bg-primary"
           style={{
             left: `${node.x}%`,
             top: `${node.y}%`,
+            width: node.size,
+            height: node.size,
+            willChange: "opacity, transform",
           }}
           initial={{ scale: 0, opacity: 0 }}
           animate={{
-            scale: [1, 1.5, 1],
-            opacity: [0.3, 0.8, 0.3],
+            scale: [0.8, 1.6, 0.8],
+            opacity: [0.2, 0.65, 0.2],
           }}
           transition={{
-            duration: 2,
+            duration: 2.5 + node.delay * 0.5,
             delay: node.delay,
             repeat: Infinity,
             ease: "easeInOut",
@@ -126,37 +115,16 @@ export const CircuitBackground = () => {
 
       {/* Scanning line */}
       <motion.div
-        className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-primary/50 to-transparent"
-        initial={{ x: "-100%" }}
+        className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-primary/40 to-transparent"
+        initial={{ x: "-2px" }}
         animate={{ x: "100vw" }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "linear",
-        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "linear", repeatDelay: 4 }}
+        style={{ willChange: "transform" }}
       />
 
-      {/* Orbiting elements */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <motion.div
-          className="absolute w-3 h-3 rounded-full bg-copper shadow-lg"
-          style={{ boxShadow: "0 0 20px hsl(30 70% 50% / 0.5)" }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
-          <div className="absolute -left-32 top-0 w-2 h-2 rounded-full bg-primary" />
-        </motion.div>
-        <motion.div
-          className="absolute w-2 h-2 rounded-full bg-accent"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        >
-          <div className="absolute -left-24 top-0 w-1.5 h-1.5 rounded-full bg-gold" />
-        </motion.div>
-      </div>
-
-      {/* Radial glow center */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl" />
+      {/* Center radial glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/4 blur-3xl" />
+      <div className="absolute top-1/3 left-2/3 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl" />
     </div>
   );
 };

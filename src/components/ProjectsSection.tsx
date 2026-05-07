@@ -1,173 +1,211 @@
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Cpu, Globe, Wallet, Radio, Server, BarChart3, Shield, Zap, Database } from "lucide-react";
-import { ProjectCard } from "./ProjectCard";
+import { Microscope, Train, Brain, Droplets, Eye, ExternalLink } from "lucide-react";
 
-const embeddedProjects = [
+const projects = [
   {
-    title: "Industrial Sensor Network",
-    problem: "Legacy factory equipment lacked real-time monitoring, causing unplanned downtime and maintenance delays.",
-    objective: "Design a low-power mesh sensor network for continuous machine health monitoring.",
-    technologies: ["ESP32", "MQTT", "LoRaWAN", "C++", "PCB Design"],
-    outcome: "Reduced unplanned downtime by 40% through predictive maintenance alerts.",
-    icon: Radio,
-    accentColor: "via-primary",
+    title: "AI-Enabled Digital Microscope",
+    subtitle: "Smart Diagnostics",
+    period: "Feb 2026 – Present",
+    tags: ["Python", "OpenCV", "ESP32-CAM", "NumPy", "Flask"],
+    domain: "Computer Vision",
+    description:
+      "AI-enabled digital microscope capturing and analyzing microscopic images in real time. Integrated ESP32-CAM for image acquisition with automated detection and classification.",
+    outcome: "Low-cost, portable solution for educational and diagnostic assistance.",
+    icon: Microscope,
+    color: "primary",
+    link: "#",
   },
   {
-    title: "Smart Agriculture Controller",
-    problem: "Manual irrigation systems wasted water and required constant human supervision.",
-    objective: "Build an automated irrigation system with soil moisture sensing and weather integration.",
-    technologies: ["Arduino", "Sensors", "Solar Power", "REST API", "React Native"],
-    outcome: "Achieved 35% water savings with fully autonomous operation.",
-    icon: Cpu,
-    accentColor: "via-accent",
+    title: "Intelligent Train Monitoring",
+    subtitle: "Decision System",
+    period: "Mar 2025 – Present",
+    tags: ["MATLAB Simulink", "Sensor Fusion", "GPS", "INS", "LiDAR", "Radar"],
+    domain: "IoT · Embedded · Simulation",
+    description:
+      "3D train monitoring system using MATLAB Simulink integrating GPS, INS, LiDAR, and radar sensors. Implemented sensor fusion and decision logic for station vs. transit status.",
+    outcome: "Real-time signal processing with modular architecture for safe railway ops.",
+    icon: Train,
+    color: "accent",
+    link: null,
   },
   {
-    title: "Edge Computing Gateway",
-    problem: "Cloud-dependent IoT systems suffered from latency and connectivity issues in remote locations.",
-    objective: "Develop an edge gateway for local data processing with cloud sync capabilities.",
-    technologies: ["Raspberry Pi", "Docker", "Python", "TensorFlow Lite", "Redis"],
-    outcome: "Enabled offline operation with 99.9% data integrity on reconnection.",
-    icon: Server,
-    accentColor: "via-copper",
+    title: "Epilepsy Monitoring & Seizure Prediction",
+    subtitle: "IoT Healthcare System",
+    period: "Jan 2025 – Apr 2026",
+    tags: ["Python", "LSTM", "ESP32", "GSR Sensor", "Accelerometer"],
+    domain: "ML · IoT · Healthcare",
+    description:
+      "IoT-based epilepsy monitoring integrating GSR, accelerometer, and gyroscope sensors with ESP32. LSTM model for predictive seizure detection with cloud connectivity.",
+    outcome: "Remote monitoring and caregiver alerts via mobile notifications.",
+    icon: Brain,
+    color: "copper",
+    link: null,
+  },
+  {
+    title: "IoT-Based Smart IV Monitoring",
+    subtitle: "Healthcare System",
+    period: "Feb 2024 – Jul 2024",
+    tags: ["ESP32", "Sensors", "Embedded C", "IoT Platforms"],
+    domain: "IoT · Embedded · Healthcare",
+    description:
+      "Smart IV monitoring system tracking fluid levels and flow rate in real time. Integrated sensors with ESP32 to detect anomalies like empty bottles or flow interruptions.",
+    outcome: "Automated healthcare alerts reducing manual supervision needs.",
+    icon: Droplets,
+    color: "gold",
+    link: "#",
+  },
+  {
+    title: "Stress Detection via Pupillometry",
+    subtitle: "Computer Vision",
+    period: "May 2025 – Nov 2025",
+    tags: ["Python", "OpenCV", "NumPy", "Machine Learning"],
+    domain: "ML · Computer Vision",
+    description:
+      "Stress detection system based on pupil dilation analysis using computer vision. Processed eye images to extract features and applied ML models for stress classification.",
+    outcome: "Non-invasive physiological signal analysis for mental health monitoring.",
+    icon: Eye,
+    color: "primary",
+    link: "#",
   },
 ];
 
-const webProjects = [
-  {
-    title: "Real-Time Analytics Dashboard",
-    problem: "Operations teams struggled with fragmented data across multiple monitoring tools.",
-    objective: "Create a unified dashboard aggregating metrics from 15+ data sources in real-time.",
-    technologies: ["React", "Node.js", "WebSockets", "PostgreSQL", "D3.js"],
-    outcome: "Consolidated monitoring reduced incident response time by 60%.",
-    icon: BarChart3,
-    accentColor: "via-primary",
+const colorMap: Record<string, { border: string; tag: string; text: string; dot: string; glow: string }> = {
+  primary: {
+    border: "border-primary/25 hover:border-primary/55",
+    tag: "bg-primary/8 text-primary border-primary/20",
+    text: "text-primary",
+    dot: "bg-primary",
+    glow: "from-primary/8",
   },
-  {
-    title: "Automated CI/CD Pipeline",
-    problem: "Manual deployment processes caused frequent errors and slow release cycles.",
-    objective: "Design a fully automated pipeline with testing, security scanning, and staged rollouts.",
-    technologies: ["GitHub Actions", "Docker", "Kubernetes", "Terraform", "ArgoCD"],
-    outcome: "Deployment frequency increased 5x with zero-downtime releases.",
-    icon: Zap,
-    accentColor: "via-accent",
+  accent: {
+    border: "border-accent/25 hover:border-accent/55",
+    tag: "bg-accent/8 text-accent border-accent/20",
+    text: "text-accent",
+    dot: "bg-accent",
+    glow: "from-accent/8",
   },
-  {
-    title: "Enterprise Data Platform",
-    problem: "Siloed databases prevented cross-functional analytics and reporting.",
-    objective: "Build a centralized data lake with automated ETL pipelines and access controls.",
-    technologies: ["Python", "Apache Airflow", "Snowflake", "dbt", "FastAPI"],
-    outcome: "Enabled self-service analytics for 200+ users across departments.",
-    icon: Database,
-    accentColor: "via-copper",
+  copper: {
+    border: "border-copper/25 hover:border-copper/55",
+    tag: "bg-copper/8 text-copper border-copper/20",
+    text: "text-copper",
+    dot: "bg-copper",
+    glow: "from-copper/8",
   },
-];
-
-const fintechProjects = [
-  {
-    title: "Transaction Anomaly Detection",
-    problem: "Manual fraud review processes couldn't scale with increasing transaction volumes.",
-    objective: "Implement ML-based anomaly detection for real-time transaction screening.",
-    technologies: ["Python", "scikit-learn", "Kafka", "Redis", "FastAPI"],
-    outcome: "Detected 95% of fraudulent transactions with 0.1% false positive rate.",
-    icon: Shield,
-    accentColor: "via-primary",
+  gold: {
+    border: "border-gold/25 hover:border-gold/55",
+    tag: "bg-gold/8 text-gold border-gold/20",
+    text: "text-gold",
+    dot: "bg-gold",
+    glow: "from-gold/8",
   },
-  {
-    title: "Automated Reconciliation Engine",
-    problem: "Daily reconciliation of financial records took 8+ hours of manual work.",
-    objective: "Build an automated system for multi-source financial data reconciliation.",
-    technologies: ["Python", "Pandas", "PostgreSQL", "Celery", "React"],
-    outcome: "Reduced reconciliation time to 15 minutes with 99.99% accuracy.",
-    icon: BarChart3,
-    accentColor: "via-accent",
-  },
-  {
-    title: "Compliance Reporting Automation",
-    problem: "Regulatory reporting required extensive manual data gathering and formatting.",
-    objective: "Create automated pipelines for generating compliance reports from source systems.",
-    technologies: ["Python", "SQL", "Airflow", "LaTeX", "AWS Lambda"],
-    outcome: "Automated 90% of quarterly reporting, eliminating manual errors.",
-    icon: Wallet,
-    accentColor: "via-copper",
-  },
-];
-
-const SectionTitle = ({ tag, title, description }: { tag: string; title: string; description: string }) => (
-  <div className="text-center mb-12">
-    <span className="text-sm font-mono text-primary mb-4 block">{tag}</span>
-    <h3 className="text-2xl sm:text-3xl font-bold mb-4 font-mono">{title}</h3>
-    <p className="text-muted-foreground max-w-2xl mx-auto">{description}</p>
-  </div>
-);
+};
 
 export const ProjectsSection = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="projects" className="py-24 relative">
+    <section id="projects" className="py-28 relative">
       <div className="absolute inset-0 pcb-grid opacity-10" />
-      
+
       <div className="container px-6 relative">
         <motion.div
           ref={ref}
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
         >
-          {/* Main section header */}
           <div className="text-center mb-20">
-            <span className="text-sm font-mono text-primary mb-4 block">// PROJECTS</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+            <motion.span
+              className="text-sm font-mono text-primary mb-3 block tracking-widest"
+              initial={{ opacity: 0, y: 12 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5 }}
+            >
+              // PROJECTS
+            </motion.span>
+            <motion.h2
+              className="text-4xl sm:text-5xl font-bold mb-5"
+              initial={{ opacity: 0, y: 16 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.08 }}
+            >
               Engineering <span className="text-gradient-primary">Portfolio</span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A selection of projects spanning embedded systems, web platforms, and intelligent automation—each solving real engineering challenges.
-            </p>
+            </motion.h2>
+            <motion.p
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 16 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.16 }}
+            >
+              Real academic and research projects spanning computer vision, IoT, ML, and embedded systems.
+            </motion.p>
           </div>
 
-          {/* Embedded & IoT */}
-          <div className="mb-20">
-            <SectionTitle
-              tag="// EMBEDDED & IoT"
-              title="Hardware Systems"
-              description="Firmware, sensors, and edge computing solutions for industrial and consumer applications."
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {embeddedProjects.map((project, index) => (
-                <ProjectCard key={project.title} {...project} index={index} />
-              ))}
-            </div>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project, index) => {
+              const c = colorMap[project.color];
+              const Icon = project.icon;
+              return (
+                <motion.div
+                  key={project.title}
+                  className={`group relative p-6 rounded-2xl border ${c.border} bg-card/50 backdrop-blur-sm transition-all duration-400 flex flex-col`}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.6, delay: index * 0.09, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -8, scale: 1.01 }}
+                >
+                  {/* Hover glow */}
+                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${c.glow} via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
 
-          {/* Web & Automation */}
-          <div className="mb-20">
-            <SectionTitle
-              tag="// WEB & AUTOMATION"
-              title="Platform Engineering"
-              description="Scalable web applications, data pipelines, and infrastructure automation."
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {webProjects.map((project, index) => (
-                <ProjectCard key={project.title} {...project} index={index} />
-              ))}
-            </div>
-          </div>
+                  {/* Top accent */}
+                  <div className={`absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent ${c.dot.replace("bg-", "via-")} to-transparent opacity-50`} />
 
-          {/* FinTech */}
-          <div>
-            <SectionTitle
-              tag="// FINTECH & INTELLIGENCE"
-              title="Financial Systems"
-              description="Secure, compliant automation tools for financial operations and decision support."
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {fintechProjects.map((project, index) => (
-                <ProjectCard key={project.title} {...project} index={index} />
-              ))}
-            </div>
+                  <div className="relative flex flex-col h-full">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`p-3 rounded-xl border border-border bg-background/60`}>
+                        <Icon className={`w-5 h-5 ${c.text}`} />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-muted-foreground">{project.period}</span>
+                        {project.link && (
+                          <motion.div
+                            className="p-1.5 rounded-lg border border-border opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            whileHover={{ scale: 1.15 }}
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                          </motion.div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-1">
+                      <span className={`text-xs font-mono ${c.text} uppercase tracking-wider`}>{project.domain}</span>
+                    </div>
+                    <h3 className="text-lg font-bold font-mono mb-1 group-hover:text-primary transition-colors duration-200">{project.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed flex-1">{project.description}</p>
+
+                    {/* Tech tags */}
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {project.tags.map((tag) => (
+                        <span key={tag} className={`px-2 py-0.5 text-[11px] font-mono rounded border ${c.tag}`}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Outcome */}
+                    <div className={`pt-4 border-t border-border`}>
+                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Impact</span>
+                      <p className={`text-sm mt-1 font-medium ${c.text}`}>{project.outcome}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

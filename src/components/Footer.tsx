@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Cpu, Github, Linkedin, Mail, Heart } from "lucide-react";
+import { Cpu, Github, Linkedin, Mail, Heart, MapPin } from "lucide-react";
 
 const footerLinks = [
   { label: "About", href: "#about" },
@@ -10,84 +10,86 @@ const footerLinks = [
 ];
 
 const socialLinks = [
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:hello@example.com", label: "Email" },
+  { icon: Github, href: "https://github.com/", label: "GitHub" },
+  { icon: Linkedin, href: "https://linkedin.com/in/", label: "LinkedIn" },
+  { icon: Mail, href: "mailto:ak7043@srmist.edu.in", label: "Email" },
 ];
 
 export const Footer = () => {
   const handleNavClick = (href: string) => {
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: "smooth" });
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <footer className="relative py-12 border-t border-border bg-surface-overlay">
+    <footer className="relative py-14 border-t border-border bg-surface-overlay">
       <div className="absolute inset-0 pcb-grid opacity-5" />
-      
+
       <div className="container px-6 relative">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Brand */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
           <div>
-            <a href="#" className="flex items-center gap-2 group mb-4">
-              <div className="p-2 rounded-lg border border-primary/30 bg-primary/10">
+            <a href="#" className="flex items-center gap-2.5 mb-4 w-fit" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+              <div className="p-2 rounded-xl border border-primary/30 bg-primary/8">
                 <Cpu className="w-5 h-5 text-primary" />
               </div>
               <span className="font-mono font-bold text-lg">
-                <span className="text-primary">&lt;</span>
-                R.Aswin Kannaa
-                <span className="text-primary">/&gt;</span>
+                <span className="text-primary">&lt;</span>Aswin<span className="text-primary">/&gt;</span>
               </span>
             </a>
-            <p className="text-sm text-muted-foreground">
-              Engineering intelligent systems across embedded, web, and financial technology domains.
+            <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+              Full-stack engineer, IoT systems enthusiast, and AI/ML developer based in Trichy, India.
             </p>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPin className="w-3 h-3" />
+              Thiruvenkada Nagar, Trichy – 620013
+            </div>
           </div>
 
-          {/* Quick links */}
           <div>
-            <h4 className="font-mono font-bold mb-4 text-sm uppercase tracking-wider">Navigation</h4>
-            <ul className="space-y-2">
+            <h4 className="font-mono font-bold mb-5 text-xs uppercase tracking-widest text-muted-foreground">Navigation</h4>
+            <ul className="space-y-2.5">
               {footerLinks.map((link) => (
                 <li key={link.label}>
                   <button
                     onClick={() => handleNavClick(link.href)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-mono"
                   >
-                    {link.label}
+                    <span className="text-primary/50 mr-2">//</span>{link.label}
                   </button>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Social */}
           <div>
-            <h4 className="font-mono font-bold mb-4 text-sm uppercase tracking-wider">Connect</h4>
-            <div className="flex gap-4">
+            <h4 className="font-mono font-bold mb-5 text-xs uppercase tracking-widest text-muted-foreground">Connect</h4>
+            <div className="flex gap-3 mb-5">
               {socialLinks.map((link) => (
                 <motion.a
                   key={link.label}
                   href={link.href}
-                  className="p-2 rounded-lg border border-border bg-card/50 text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
-                  whileHover={{ scale: 1.1 }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-xl border border-border bg-card/50 text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-200"
+                  whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   aria-label={link.label}
                 >
-                  <link.icon className="w-5 h-5" />
+                  <link.icon className="w-4 h-4" />
                 </motion.a>
               ))}
             </div>
+            <a href="mailto:ak7043@srmist.edu.in" className="text-sm text-muted-foreground hover:text-primary transition-colors font-mono">
+              ak7043@srmist.edu.in
+            </a>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} All rights reserved.
+        <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground font-mono">
+            © {new Date().getFullYear()} Aswin Kannaa R. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Crafted with <Heart className="w-4 h-4 text-copper" /> and precision engineering
+          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+            Crafted with <Heart className="w-4 h-4 text-copper fill-copper" /> and precision engineering
           </p>
         </div>
       </div>
