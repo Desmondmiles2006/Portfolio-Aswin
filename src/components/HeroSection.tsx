@@ -32,8 +32,15 @@ function TypewriterText({ texts }: { texts: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      // If user prefers reduced motion, just show the first text
+      setDisplayed(texts[0]);
+      return;
+    }
+
     const current = texts[currentIndex];
     const timeout = setTimeout(() => {
       if (!isDeleting) {
@@ -52,7 +59,7 @@ function TypewriterText({ texts }: { texts: string[] }) {
       }
     }, isDeleting ? 45 : 90);
     return () => clearTimeout(timeout);
-  }, [displayed, isDeleting, currentIndex, texts]);
+  }, [displayed, isDeleting, currentIndex, texts, prefersReducedMotion]);
 
   return (
     <span className="text-gradient-primary">

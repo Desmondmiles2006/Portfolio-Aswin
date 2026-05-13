@@ -56,17 +56,83 @@ export const ContactSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      errors.name = "Name is required";
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email";
+    }
+
+    if (!formData.subject.trim()) {
+      errors.subject = "Subject is required";
+    } else if (formData.subject.trim().length < 3) {
+      errors.subject = "Subject must be at least 3 characters";
+    }
+
+    if (!formData.message.trim()) {
+      errors.message = "Message is required";
+    } else if (formData.message.trim().length < 10) {
+      errors.message = "Message must be at least 10 characters";
+    }
+
+    return errors;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error for this field when user starts typing
+    if (formErrors[name]) {
+      setFormErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all fields correctly.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast({
-      title: "Message sent!",
-      description: "Thanks for reaching out. I'll get back to you soon.",
-    });
-    setIsSubmitting(false);
-    (e.target as HTMLFormElement).reset();
+    try {
+      // Simulate form submission
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast({
+        title: "Success! ✨",
+        description: "Thanks for reaching out. I'll get back to you within 24 hours.",
+      });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormErrors({});
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -95,37 +161,116 @@ export const ContactSection = () => {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
             {/* Form */}
             <motion.div variants={itemVariants} className="lg:col-span-3">
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-mono text-muted-foreground mb-2 block uppercase tracking-wider">Name</label>
-                    <Input type="text" placeholder="Your name" required className="bg-card/50 border-border focus:border-primary transition-colors h-11" />
+                    <div>
+                      <Input
+                        type="text"
+                        name="name"
+                        placeholder="Your name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className={`bg-card/50 border-border focus:border-primary transition-colors h-11 ${
+                          formErrors.name ? "border-destructive focus:border-destructive" : ""
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                      {formErrors.name && (
+                        <motion.p
+                          className="text-xs text-destructive mt-1"
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                        >
+                          {formErrors.name}
+                        </motion.p>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <label className="text-xs font-mono text-muted-foreground mb-2 block uppercase tracking-wider">Email</label>
-                    <Input type="email" placeholder="your@email.com" required className="bg-card/50 border-border focus:border-primary transition-colors h-11" />
+                    <div>
+                      <Input
+                        type="email"
+                        name="email"
+                        placeholder="your@email.com"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`bg-card/50 border-border focus:border-primary transition-colors h-11 ${
+                          formErrors.email ? "border-destructive focus:border-destructive" : ""
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                      {formErrors.email && (
+                        <motion.p
+                          className="text-xs text-destructive mt-1"
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                        >
+                          {formErrors.email}
+                        </motion.p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 <div>
                   <label className="text-xs font-mono text-muted-foreground mb-2 block uppercase tracking-wider">Subject</label>
-                  <Input type="text" placeholder="Project inquiry, collaboration, etc." required className="bg-card/50 border-border focus:border-primary transition-colors h-11" />
+                  <div>
+                    <Input
+                      type="text"
+                      name="subject"
+                      placeholder="Project inquiry, collaboration, etc."
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      className={`bg-card/50 border-border focus:border-primary transition-colors h-11 ${
+                        formErrors.subject ? "border-destructive focus:border-destructive" : ""
+                      }`}
+                      disabled={isSubmitting}
+                    />
+                    {formErrors.subject && (
+                      <motion.p
+                        className="text-xs text-destructive mt-1"
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        {formErrors.subject}
+                      </motion.p>
+                    )}
+                  </div>
                 </div>
 
                 <div>
                   <label className="text-xs font-mono text-muted-foreground mb-2 block uppercase tracking-wider">Message</label>
-                  <Textarea
-                    placeholder="Tell me about your project or idea..."
-                    required
-                    rows={5}
-                    className="bg-card/50 border-border focus:border-primary resize-none transition-colors"
-                  />
+                  <div>
+                    <Textarea
+                      name="message"
+                      placeholder="Tell me about your project or idea..."
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      rows={5}
+                      className={`bg-card/50 border-border focus:border-primary resize-none transition-colors ${
+                        formErrors.message ? "border-destructive focus:border-destructive" : ""
+                      }`}
+                      disabled={isSubmitting}
+                    />
+                    {formErrors.message && (
+                      <motion.p
+                        className="text-xs text-destructive mt-1"
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        {formErrors.message}
+                      </motion.p>
+                    )}
+                  </div>
                 </div>
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full group bg-primary hover:bg-primary/90 text-primary-foreground font-mono shadow-lg shadow-primary/20 hover:shadow-primary/35 transition-all duration-300 h-12"
+                  className="w-full group bg-primary hover:bg-primary/90 text-primary-foreground font-mono shadow-lg shadow-primary/20 hover:shadow-primary/35 transition-all duration-300 h-12 disabled:opacity-60"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">

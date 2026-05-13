@@ -7,11 +7,13 @@ import { ExperienceSection } from "@/components/ExperienceSection";
 import { AchievementsSection } from "@/components/AchievementsSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
+import { FloatingContactCTA } from "@/components/FloatingContactCTA";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground relative noise-overlay">
       <Navigation />
+      <FloatingContactCTA />
       <main>
         <HeroSection />
         <AboutSection />

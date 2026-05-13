@@ -7,6 +7,7 @@ const projects = [
     title: "AI-Enabled Digital Microscope",
     subtitle: "Smart Diagnostics",
     period: "Feb 2026 – Present",
+    status: "ongoing",
     tags: ["Python", "OpenCV", "ESP32-CAM", "NumPy", "Flask"],
     domain: "Computer Vision",
     description:
@@ -20,6 +21,7 @@ const projects = [
     title: "Intelligent Train Monitoring",
     subtitle: "Decision System",
     period: "Mar 2025 – Present",
+    status: "ongoing",
     tags: ["MATLAB Simulink", "Sensor Fusion", "GPS", "INS", "LiDAR", "Radar"],
     domain: "IoT · Embedded · Simulation",
     description:
@@ -33,6 +35,7 @@ const projects = [
     title: "Epilepsy Monitoring & Seizure Prediction",
     subtitle: "IoT Healthcare System",
     period: "Jan 2025 – Apr 2026",
+    status: "completed",
     tags: ["Python", "LSTM", "ESP32", "GSR Sensor", "Accelerometer"],
     domain: "ML · IoT · Healthcare",
     description:
@@ -46,6 +49,7 @@ const projects = [
     title: "IoT-Based Smart IV Monitoring",
     subtitle: "Healthcare System",
     period: "Feb 2024 – Jul 2024",
+    status: "completed",
     tags: ["ESP32", "Sensors", "Embedded C", "IoT Platforms"],
     domain: "IoT · Embedded · Healthcare",
     description:
@@ -59,6 +63,7 @@ const projects = [
     title: "Stress Detection via Pupillometry",
     subtitle: "Computer Vision",
     period: "May 2025 – Nov 2025",
+    status: "completed",
     tags: ["Python", "OpenCV", "NumPy", "Machine Learning"],
     domain: "ML · Computer Vision",
     description:
@@ -143,10 +148,12 @@ export const ProjectsSection = () => {
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project, index) => {
               const c = colorMap[project.color];
               const Icon = project.icon;
+              const statusLabel = project.status === "ongoing" ? "Ongoing" : "Completed";
+              const statusColor = project.status === "ongoing" ? "bg-primary/20 text-primary border-primary/30" : "bg-muted/20 text-muted-foreground border-muted/30";
               return (
                 <motion.div
                   key={project.title}
@@ -170,7 +177,9 @@ export const ProjectsSection = () => {
                         <Icon className={`w-5 h-5 ${c.text}`} />
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-muted-foreground">{project.period}</span>
+                        <span className={`text-xs font-mono px-2.5 py-1 rounded-full border ${statusColor}`}>
+                          {statusLabel}
+                        </span>
                         {project.link && (
                           <motion.div
                             className="p-1.5 rounded-lg border border-border opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
@@ -186,7 +195,7 @@ export const ProjectsSection = () => {
                       <span className={`text-xs font-mono ${c.text} uppercase tracking-wider`}>{project.domain}</span>
                     </div>
                     <h3 className="text-lg font-bold font-mono mb-1 group-hover:text-primary transition-colors duration-200">{project.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed flex-1">{project.description}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed flex-1">{project.description}</p>
 
                     {/* Tech tags */}
                     <div className="flex flex-wrap gap-1.5 mb-4">
@@ -197,10 +206,16 @@ export const ProjectsSection = () => {
                       ))}
                     </div>
 
-                    {/* Outcome */}
-                    <div className={`pt-4 border-t border-border`}>
-                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Impact</span>
-                      <p className={`text-sm mt-1 font-medium ${c.text}`}>{project.outcome}</p>
+                    {/* Period & Outcome */}
+                    <div className={`pt-4 border-t border-border space-y-2`}>
+                      <div>
+                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Period</span>
+                        <p className="text-xs font-mono text-muted-foreground">{project.period}</p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Impact</span>
+                        <p className={`text-sm mt-1 font-medium ${c.text}`}>{project.outcome}</p>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

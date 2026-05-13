@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Cpu } from "lucide-react";
+import { Menu, X, Cpu, Moon, Sun } from "lucide-react";
 import { Button } from "./ui/button";
+import { useTheme } from "next-themes";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -16,15 +17,20 @@ export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const navRef = useRef<HTMLElement | null>(null);
+  const { theme, setTheme } = useTheme();
 
-  // Throttled scroll handler for header background
+  // Throttled scroll handler for header background & scroll progress
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           setIsScrolled(window.scrollY > 40);
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const scrolled = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+          setScrollProgress(scrolled);
           ticking = false;
         });
         ticking = true;
@@ -153,7 +159,18 @@ export const Navigation = () => {
             })}
           </div>
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-3">
+            {/* Theme toggle */}
+            <motion.button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2.5 rounded-xl border border-border bg-card/60 backdrop-blur-sm hover:border-primary/30 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </motion.button>
+
             <Button
               size="sm"
               className="font-mono bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 hover:shadow-primary/35 transition-all duration-300"
@@ -176,6 +193,13 @@ export const Navigation = () => {
             </motion.div>
           </motion.button>
         </div>
+
+        {/* Scroll progress bar */}
+        <motion.div
+          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-primary via-accent to-copper"
+          style={{ width: `${scrollProgress}%` }}
+          transition={{ duration: 0.2 }}
+        />
       </motion.nav>
 
       {/* Mobile menu */}
