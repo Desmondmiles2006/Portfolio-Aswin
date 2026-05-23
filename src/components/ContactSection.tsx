@@ -10,14 +10,14 @@ const socialLinks = [
   {
     icon: Github,
     label: "GitHub",
-    href: "https://github.com/",
+    href: "https://github.com/Desmondmiles2006",
     sub: "github.com/aswin",
     color: "hover:text-primary",
   },
   {
     icon: Linkedin,
     label: "LinkedIn",
-    href: "https://linkedin.com/in/",
+    href: "https://linkedin.com/in/aswin-kannaa-56b3ab2b4",
     sub: "linkedin.com/in/aswin",
     color: "hover:text-accent",
   },
